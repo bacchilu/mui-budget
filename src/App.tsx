@@ -10,6 +10,7 @@ import Decimal from "decimal.js";
 import React from "react";
 
 import { LocalStore } from "./libs/local-store";
+import { toCurrency } from "./libs/utils";
 
 const useBudget = function () {
   const [currentBudget, setCurrentBudget] = React.useState(
@@ -25,51 +26,59 @@ const useBudget = function () {
   ] as [Decimal, (value: Decimal) => void];
 };
 
-const App = function () {
-  const [budget, addToCurrentBudget] = useBudget();
-  const [currentValue, setCurrentValue] = React.useState("");
+const Amount: React.FC<{ value: string; setValue: (v: string) => void }> =
+  function ({ value, setValue }) {
+    const onChange = function (e: React.ChangeEvent<HTMLInputElement>) {
+      setValue(e.target.value);
+    };
 
-  const onChange = function (e: React.ChangeEvent<HTMLInputElement>) {
-    setCurrentValue(e.target.value);
+    return (
+      <FormControl fullWidth sx={{ m: 1 }}>
+        <InputLabel>Amount</InputLabel>
+        <OutlinedInput
+          startAdornment={<InputAdornment position="start">€</InputAdornment>}
+          inputProps={{ type: "number", step: "0.01" }}
+          label="Amount"
+          autoFocus={true}
+          value={value}
+          onChange={onChange}
+          autoComplete="off"
+        />
+      </FormControl>
+    );
   };
+
+const AmountForm: React.FC<{ onSubmit: (v: Decimal) => void }> = function ({
+  onSubmit,
+}) {
+  const [value, setValue] = React.useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      addToCurrentBudget(new Decimal(currentValue));
-      setCurrentValue("");
+      onSubmit(new Decimal(value));
+      setValue("");
     } catch (e) {
       console.log("Error!");
     }
   };
 
   return (
-    <>
-      <Container maxWidth="sm">
-        <Typography variant="h1">Budget</Typography>
-        <Typography variant="h2">
-          {budget
-            .toNumber()
-            .toLocaleString("it-IT", { style: "currency", currency: "EUR" })}
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <FormControl fullWidth sx={{ m: 1 }}>
-            <InputLabel>Amount</InputLabel>
-            <OutlinedInput
-              startAdornment={
-                <InputAdornment position="start">€</InputAdornment>
-              }
-              inputProps={{ type: "number", step: "0.01" }}
-              label="Amount"
-              autoFocus={true}
-              value={currentValue}
-              onChange={onChange}
-              autoComplete="off"
-            />
-          </FormControl>
-        </form>
-      </Container>
-    </>
+    <form onSubmit={handleSubmit}>
+      <Amount value={value} setValue={setValue} />
+    </form>
+  );
+};
+
+const App = function () {
+  const [budget, addToCurrentBudget] = useBudget();
+
+  return (
+    <Container maxWidth="sm">
+      <Typography variant="h1">Budget</Typography>
+      <Typography variant="h2">{toCurrency(budget)}</Typography>
+      <AmountForm onSubmit={addToCurrentBudget} />
+    </Container>
   );
 };
 
