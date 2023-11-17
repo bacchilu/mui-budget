@@ -17,7 +17,10 @@ const useBudget = function () {
     LocalStore.get().current_budget
   );
   React.useEffect(() => {
-    LocalStore.set({ current_budget: currentBudget, last_update: new Date() });
+    LocalStore.set({
+      current_budget: currentBudget,
+      last_recharge: new Date(),
+    });
   }, [currentBudget]);
 
   return [
