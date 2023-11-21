@@ -19,7 +19,7 @@ export const LocalStore = (function () {
       ? null
       : ({
           current_budget: new Decimal(data.current_budget),
-          last_recharge: new Date(data.last_update + "T00:00:00Z"),
+          last_recharge: new Date(data.last_recharge + "T00:00:00Z"),
         } as StoreData);
   };
 
