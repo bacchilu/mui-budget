@@ -9,9 +9,7 @@ const CurrentBudget = (function () {
   const last_recharge = storeData.last_recharge;
 
   return {
-    get: function () {
-      return current_budget;
-    },
+    get: () => current_budget,
     set: function (value: Decimal) {
       current_budget = value;
       LocalStore.set({ current_budget, last_recharge });
