@@ -10,7 +10,7 @@ import Decimal from "decimal.js";
 import React from "react";
 
 import { useBudget } from "./hooks/budget";
-import { toCurrency } from "./libs/utils";
+import { getToday, toCurrency } from "./libs/utils";
 
 const Amount: React.FC<{ value: string; setValue: (v: string) => void }> =
   function ({ value, setValue }) {
@@ -57,12 +57,17 @@ const AmountForm: React.FC<{ onSubmit: (v: Decimal) => void }> = function ({
 };
 
 const App = function () {
-  const [budget, addToCurrentBudget] = useBudget();
+  const { currentBudget, lastRecharge, addToCurrentBudget, recharge } =
+    useBudget();
+  React.useEffect(() => {
+    if (getToday().getTime() > lastRecharge.getTime())
+      recharge(new Decimal("0"));
+  }, [lastRecharge, recharge]);
 
   return (
     <Container maxWidth="sm">
       <Typography variant="h1">Budget</Typography>
-      <Typography variant="h2">{toCurrency(budget)}</Typography>
+      <Typography variant="h2">{toCurrency(currentBudget)}</Typography>
       <AmountForm onSubmit={addToCurrentBudget} />
     </Container>
   );

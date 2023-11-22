@@ -5,3 +5,8 @@ export const toCurrency = function (value: Decimal) {
     .toNumber()
     .toLocaleString("it-IT", { style: "currency", currency: "EUR" });
 };
+
+export const getToday = function () {
+  const now = new Date();
+  return new Date(now.toISOString().slice(0, 10));
+};
