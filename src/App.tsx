@@ -10,7 +10,7 @@ import Decimal from "decimal.js";
 import React from "react";
 
 import { useBudget } from "./hooks/budget";
-import { getToday, toCurrency } from "./libs/utils";
+import { DateUtils, toCurrency } from "./libs/utils";
 
 const Amount: React.FC<{ value: string; setValue: (v: string) => void }> =
   function ({ value, setValue }) {
@@ -60,7 +60,7 @@ const App = function () {
   const { currentBudget, lastRecharge, addToCurrentBudget, recharge } =
     useBudget();
   React.useEffect(() => {
-    if (getToday().getTime() > lastRecharge.getTime())
+    if (DateUtils.getToday().getTime() > lastRecharge.getTime())
       recharge(new Decimal("0"));
   }, [lastRecharge, recharge]);
 
