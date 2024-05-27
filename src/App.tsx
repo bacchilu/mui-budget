@@ -47,17 +47,25 @@ const AmountForm: React.FC<{onSubmit: (v: Decimal) => void}> = function ({onSubm
     );
 };
 
-const App = function () {
+const MainBudget = function () {
     const {currentBudget, lastRecharge, addToCurrentBudget, recharge} = useBudget();
     React.useEffect(() => {
         if (DateUtils.getToday().getTime() > lastRecharge.getTime()) recharge(new Decimal('0'));
     }, [lastRecharge, recharge]);
 
     return (
-        <Container maxWidth="sm">
+        <>
             <Typography variant="h1">Budget</Typography>
             <Typography variant="h2">{toCurrency(currentBudget)}</Typography>
             <AmountForm onSubmit={addToCurrentBudget} />
+        </>
+    );
+};
+
+const App = function () {
+    return (
+        <Container maxWidth="sm">
+            <MainBudget />
         </Container>
     );
 };
